@@ -56,6 +56,12 @@
 		C081011128B58FAE00BFE612 /* SwiftPokedex */ = {
 			isa = PBXGroup;
 			children = (
+				C081012B28B5906D00BFE612 /* Service */,
+				C081012A28B5906500BFE612 /* Model */,
+				C081012928B5905E00BFE612 /* Extensions */,
+				C081012828B5904600BFE612 /* ViewControllers */,
+				C081012728B5903D00BFE612 /* Views */,
+				C081012628B5903100BFE612 /* App */,
 				C081011228B58FAE00BFE612 /* AppDelegate.swift */,
 				C081011428B58FAE00BFE612 /* SceneDelegate.swift */,
 				C081011628B58FAE00BFE612 /* ViewController.swift */,
@@ -65,6 +71,48 @@
 				C081012028B58FB000BFE612 /* Info.plist */,
 			);
 			path = SwiftPokedex;
+			sourceTree = "<group>";
+		};
+		C081012628B5903100BFE612 /* App */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		C081012728B5903D00BFE612 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		C081012828B5904600BFE612 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		C081012928B5905E00BFE612 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		C081012A28B5906500BFE612 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		C081012B28B5906D00BFE612 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Service;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

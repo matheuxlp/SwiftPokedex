@@ -23,6 +23,7 @@
 		C081013F28B6DD7D00BFE612 /* PokemonAboutLabelsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C081013E28B6DD7D00BFE612 /* PokemonAboutLabelsTableViewCell.swift */; };
 		C081014128B6DD9500BFE612 /* PokemonAboutIconsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C081014028B6DD9500BFE612 /* PokemonAboutIconsTableViewCell.swift */; };
 		C081014328B6DDAD00BFE612 /* AboutTypeIconsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C081014228B6DDAD00BFE612 /* AboutTypeIconsCollectionViewCell.swift */; };
+		C081014628B6DE3400BFE612 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = C081014528B6DE3400BFE612 /* Kingfisher */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C081014628B6DE3400BFE612 /* Kingfisher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,6 +195,9 @@
 			dependencies = (
 			);
 			name = SwiftPokedex;
+			packageProductDependencies = (
+				C081014528B6DE3400BFE612 /* Kingfisher */,
+			);
 			productName = SwiftPokedex;
 			productReference = C081010F28B58FAE00BFE612 /* SwiftPokedex.app */;
 			productType = "com.apple.product-type.application";
@@ -221,6 +226,9 @@
 				Base,
 			);
 			mainGroup = C081010628B58FAE00BFE612;
+			packageReferences = (
+				C081014428B6DE3400BFE612 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+			);
 			productRefGroup = C081011028B58FAE00BFE612 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -478,6 +486,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C081014428B6DE3400BFE612 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C081014528B6DE3400BFE612 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C081014428B6DE3400BFE612 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C081010728B58FAE00BFE612 /* Project object */;
 }

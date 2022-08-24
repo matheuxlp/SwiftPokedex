@@ -26,6 +26,7 @@
 		C081014928B6DF3F00BFE612 /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C081014828B6DF3F00BFE612 /* UIImage+Extensions.swift */; };
 		C081014B28B6DF5E00BFE612 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C081014A28B6DF5E00BFE612 /* UIView+Extensions.swift */; };
 		C081014D28B6E03D00BFE612 /* Home.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C081014C28B6E03D00BFE612 /* Home.storyboard */; };
+		C081015128B6E0D200BFE612 /* Pokemon.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C081015028B6E0D200BFE612 /* Pokemon.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 		C081014828B6DF3F00BFE612 /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
 		C081014A28B6DF5E00BFE612 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		C081014C28B6E03D00BFE612 /* Home.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Home.storyboard; sourceTree = "<group>"; };
+		C081015028B6E0D200BFE612 /* Pokemon.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Pokemon.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,7 +94,6 @@
 				C081011428B58FAE00BFE612 /* SceneDelegate.swift */,
 				C081011628B58FAE00BFE612 /* ViewController.swift */,
 				C081011B28B58FB000BFE612 /* Assets.xcassets */,
-				C081011D28B58FB000BFE612 /* LaunchScreen.storyboard */,
 				C081012028B58FB000BFE612 /* Info.plist */,
 			);
 			path = SwiftPokedex;
@@ -108,6 +109,8 @@
 		C081012728B5903D00BFE612 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C081014F28B6E0C200BFE612 /* Pokemon */,
+				C081011D28B58FB000BFE612 /* LaunchScreen.storyboard */,
 				C081013928B5925B00BFE612 /* Home */,
 			);
 			path = Views;
@@ -185,6 +188,14 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
+		C081014F28B6E0C200BFE612 /* Pokemon */ = {
+			isa = PBXGroup;
+			children = (
+				C081015028B6E0D200BFE612 /* Pokemon.storyboard */,
+			);
+			path = Pokemon;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -252,6 +263,7 @@
 			files = (
 				C081014D28B6E03D00BFE612 /* Home.storyboard in Resources */,
 				C081011F28B58FB000BFE612 /* LaunchScreen.storyboard in Resources */,
+				C081015128B6E0D200BFE612 /* Pokemon.storyboard in Resources */,
 				C081011C28B58FB000BFE612 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

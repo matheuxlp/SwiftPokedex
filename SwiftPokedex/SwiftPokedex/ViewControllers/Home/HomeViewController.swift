@@ -7,50 +7,55 @@
 
 import UIKit
 
-class HomeViewController: UIViewController {
+class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     let pokeAPI = PokeAPI()
     var pokmeonsBasicInfo: [PokemonBasicInfo?] = []
 
-    @IBOutlet weak var tableView: UITableView!
+    fileprivate lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.register(HomePokemonTableViewCell.self, forCellReuseIdentifier: HomePokemonTableViewCell().identifier)
+        tableView.allowsSelection = false
+        tableView.separatorStyle = .singleLine
+        tableView.backgroundColor = .white
+        tableView.delegate = self
+        tableView.dataSource = self
+        return tableView
+    }()
 
     let searchController = UISearchController()
 
-    let tableViewData = Array(repeating: "Item", count: 20)
-
     override func viewDidLoad() {
         super.viewDidLoad()
-
         self.pokmeonsBasicInfo = pokeAPI.loadTenPokemons()
-
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TableViewCell")
-        tableView.dataSource = self
-        tableView.delegate = self
-        searchController.automaticallyShowsCancelButton = true
-        navigationItem.hidesSearchBarWhenScrolling = false
-        navigationItem.searchController = searchController
-
-        let button1 = UIBarButtonItem(image: UIImage(systemName: "square"), style: .plain,
-                                      target: self, action: #selector(self.showFilters(sender:)))
-        self.navigationItem.rightBarButtonItem  = button1
+        self.addSubviews()
+        self.setupConstraints()
     }
 
-    // filtersView
-    @objc func showFilters(sender: UIButton) {
-        performSegue(withIdentifier: "filtersView", sender: nil)
+    private func addSubviews() {
+        self.view.addSubview(self.tableView)
+    }
+
+    private func setupConstraints() {
+        NSLayoutConstraint.activate([
+            self.tableView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            self.tableView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
+            self.tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
+            self.tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+        ])
     }
 
 }
 
-extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
+extension HomeViewController {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // Code Here
         return self.pokmeonsBasicInfo.count
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 150
+        return 140
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -64,31 +69,30 @@ extension HomeViewController: UITableViewDataSource, UITableViewDelegate {
         }
         customCell.pokemon = pokeBasicInfo
         customCell.setupData()
-        let bgColorView = UIView()
-        bgColorView.backgroundColor = .clear
-        customCell.selectedBackgroundView = bgColorView
+//        let bgColorView = UIView()
+//        bgColorView.backgroundColor = .clear
+//        customCell.selectedBackgroundView = bgColorView
 
         return customCell
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "pokemonViewSegue", sender: indexPath)
-        tableView.deselectRow(at: indexPath, animated: false)
-    }
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        performSegue(withIdentifier: "pokemonViewSegue", sender: indexPath)
+//        tableView.deselectRow(at: indexPath, animated: false)
+//    }
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "pokemonViewSegue" {
-            guard let indexPath = sender as? IndexPath else {fatalError("IndexPath not found")}
-            let pkmnVC = segue.destination as? PokemonViewController
-            guard let pokeId = pokmeonsBasicInfo[indexPath.row]?.nationalNumber,
-                  let basicInfo = pokmeonsBasicInfo[indexPath.row]
-            else {fatalError("god help me")}
-            let aboutPkm = self.pokeAPI.getAbout(pokeId, basicInfo)
-            pkmnVC?.about = aboutPkm
-            pkmnVC?.basicInfo = self.pokmeonsBasicInfo[indexPath.row]
-
-        }
-    }
+//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//        if segue.identifier == "pokemonViewSegue" {
+//            guard let indexPath = sender as? IndexPath else {fatalError("IndexPath not found")}
+//            let pkmnVC = segue.destination as? PokemonViewController
+//            guard let pokeId = pokmeonsBasicInfo[indexPath.row]?.nationalNumber,
+//                  let basicInfo = pokmeonsBasicInfo[indexPath.row]
+//            else {fatalError("god help me")}
+//            let aboutPkm = self.pokeAPI.getAbout(pokeId, basicInfo)
+//            pkmnVC?.about = aboutPkm
+//            pkmnVC?.basicInfo = self.pokmeonsBasicInfo[indexPath.row]
+//
+//        }
+//    }
 
 }
-

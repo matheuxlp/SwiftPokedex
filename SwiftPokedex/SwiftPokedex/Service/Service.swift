@@ -64,7 +64,7 @@ extension PokeAPI {
 
     public func loadTenPokemons() -> [PokemonBasicInfo] {
         var pokes: [PokemonBasicInfo] = []
-        for pokeId in 252...262 {
+        for pokeId in 1...10 {
             if let poke = self.getBasicInfo(identifier: pokeId) {
                 pokes.append(poke)
             }

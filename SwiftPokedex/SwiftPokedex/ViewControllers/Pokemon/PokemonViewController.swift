@@ -15,20 +15,138 @@ class PokemonViewController: UIViewController {
     var basicInfo: PokemonBasicInfo?
     var about: About?
 
-    @IBOutlet weak fileprivate var stackView: UIStackView!
+    fileprivate let aboutBackgroundView: UIView = {
+        let uiView = UIView()
+        uiView.translatesAutoresizingMaskIntoConstraints = false
+        return uiView
+    }()
 
-    @IBOutlet weak fileprivate var aboutBackgroundView: UIView!
-    @IBOutlet weak fileprivate var statsBackgroundView: UIView!
+    fileprivate let statsBackgroundView: UIView = {
+        let uiView = UIView()
+        uiView.translatesAutoresizingMaskIntoConstraints = false
+        return uiView
+    }()
 
-    @IBOutlet weak fileprivate var aboutButtonOutlet: UIButton!
-    @IBOutlet weak fileprivate var statsButtonOutlet: UIButton!
+    fileprivate lazy var aboutButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        button.addTarget(self, action: #selector(aboutButtonAction), for: .touchUpInside)
+        return button
+    }()
 
-    @IBOutlet weak fileprivate var aboutBackgorundImage: UIImageView!
-    @IBOutlet weak fileprivate var statsBackgroundImage: UIImageView!
+    fileprivate lazy var statsButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        button.addTarget(self, action: #selector(statsButtonAction), for: .touchUpInside)
+        return button
+    }()
 
-    @IBOutlet weak fileprivate var aboutTableView: UITableView!
+    fileprivate let aboutBackgroundImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.backgroundColor = .clear
+        return imageView
+    }()
+
+    fileprivate let statsBackgroundImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.backgroundColor = .clear
+        return imageView
+    }()
+
+    fileprivate lazy var aboutTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.allowsSelection = false
+        tableView.separatorStyle = .singleLine
+        tableView.backgroundColor = .white
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 60
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(PokemonAboutLabelsTableViewCell.self,
+                           forCellReuseIdentifier: PokemonAboutLabelsTableViewCell().identifier)
+        tableView.register(PokemonAboutIconsTableViewCell.self,
+                           forCellReuseIdentifier: PokemonAboutIconsTableViewCell().identifier)
+        return tableView
+    }()
+
+    fileprivate let selectionStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.alignment = .center
+        stackView.backgroundColor = .clear
+        return stackView
+    }()
 
     fileprivate var selectedView: PokemonViewSelection = .about
+
+    fileprivate func addSubiviews() {
+
+        self.view.addSubview(self.selectionStackView)
+        self.view.addSubview(self.aboutTableView)
+        self.selectionStackView.addArrangedSubview(self.aboutBackgroundView)
+        self.selectionStackView.addArrangedSubview(self.statsBackgroundView)
+
+        self.view.addSubview(self.aboutTableView)
+
+        self.aboutBackgroundView.addSubview(self.aboutBackgroundImage)
+        self.statsBackgroundView.addSubview(self.statsBackgroundImage)
+
+        self.aboutBackgroundView.addSubview(self.aboutButton)
+        self.statsBackgroundView.addSubview(self.statsButton)
+    }
+
+    fileprivate func setupConstraints() {
+        NSLayoutConstraint.activate([
+            self.selectionStackView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
+            self.selectionStackView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            self.selectionStackView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            self.selectionStackView.bottomAnchor.constraint(equalTo: self.aboutTableView.topAnchor),
+
+            self.aboutBackgroundView.topAnchor.constraint(equalTo: self.selectionStackView.topAnchor),
+            self.aboutBackgroundView.leadingAnchor.constraint(equalTo: self.selectionStackView.leadingAnchor),
+
+            self.aboutBackgroundView.heightAnchor.constraint(equalToConstant: 50),
+
+            self.statsBackgroundView.topAnchor.constraint(equalTo: self.selectionStackView.topAnchor),
+            self.statsBackgroundView.trailingAnchor.constraint(equalTo: self.selectionStackView.trailingAnchor),
+            self.statsBackgroundView.leadingAnchor.constraint(equalTo: self.aboutBackgroundView.trailingAnchor),
+
+            self.statsBackgroundView.heightAnchor.constraint(equalToConstant: 50),
+
+            self.aboutBackgroundImage.topAnchor.constraint(equalTo: self.aboutBackgroundView.topAnchor),
+            self.aboutBackgroundImage.centerXAnchor.constraint(equalTo: self.aboutBackgroundView.centerXAnchor),
+
+            self.aboutBackgroundImage.heightAnchor.constraint(equalToConstant: 100),
+            self.aboutBackgroundImage.widthAnchor.constraint(equalToConstant: 100),
+
+            self.aboutButton.topAnchor.constraint(equalTo: self.aboutBackgroundView.topAnchor),
+            self.aboutButton.leadingAnchor.constraint(equalTo: self.aboutBackgroundView.leadingAnchor),
+            self.aboutButton.trailingAnchor.constraint(equalTo: self.aboutBackgroundView.trailingAnchor),
+            self.aboutButton.bottomAnchor.constraint(equalTo: self.aboutBackgroundView.bottomAnchor),
+
+            self.statsBackgroundImage.topAnchor.constraint(equalTo: self.statsBackgroundView.topAnchor),
+            self.statsBackgroundImage.centerXAnchor.constraint(equalTo: self.statsBackgroundView.centerXAnchor),
+
+            self.statsBackgroundImage.heightAnchor.constraint(equalToConstant: 100),
+            self.statsBackgroundImage.widthAnchor.constraint(equalToConstant: 100),
+
+            self.statsButton.topAnchor.constraint(equalTo: self.statsBackgroundView.topAnchor),
+            self.statsButton.leadingAnchor.constraint(equalTo: self.statsBackgroundView.leadingAnchor),
+            self.statsButton.trailingAnchor.constraint(equalTo: self.statsBackgroundView.trailingAnchor),
+            self.statsButton.bottomAnchor.constraint(equalTo: self.statsBackgroundView.bottomAnchor),
+
+            self.aboutTableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            self.aboutTableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            self.aboutTableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+        ])
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,13 +158,20 @@ class PokemonViewController: UIViewController {
         self.aboutTableView.dataSource = self
         self.aboutTableView.delegate = self
         self.configureButtons()
+
+        self.addSubiviews()
+        self.setupConstraints()
     }
 
-    @IBAction func aboutButtonAction(_ sender: UIButton) {
-        self.switchButtonStyle(.about)
+    @objc func aboutButtonAction(_ sender: UIButton) {
+        if self.selectedView != .about {
+            self.switchButtonStyle(.about)
+        }
     }
-    @IBAction func statsButtonAction(_ sender: UIButton) {
-        self.switchButtonStyle(.stats)
+    @objc func statsButtonAction(_ sender: UIButton) {
+        if self.selectedView != .stats {
+            self.switchButtonStyle(.stats)
+        }
     }
 
     fileprivate func setupCustomTitle() {
@@ -95,25 +220,13 @@ extension PokemonViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0:
-             return self.generateCell(indexPath: indexPath, infoType: .flavorText, text: about?.flavorText)
-        case 1: // pokedex data
-            if indexPath.row == 5 {
-                let identifier = "PokemonAboutIconsCell"
-                guard let customCell = self.aboutTableView.dequeueReusableCell(
-                    withIdentifier: identifier, for: indexPath) as? PokemonAboutIconsTableViewCell
-                else {
-                    fatalError("There should be a cell with \(identifier) identifier.")
-                }
-                customCell.weaknesses = about?.pokedex.weaknesses
-                customCell.setupData()
-                return customCell
-            } else {
-                return self.generateCell(indexPath: indexPath,
-                                         data: about?.pokedex,
-                                         infoType: .pokedexData,
-                                         text: "Pokédex Data",
-                                         colorName: basicInfo?.types[0])
-            }
+            return self.generateCell(indexPath: indexPath, infoType: .flavorText, text: about?.flavorText)
+        case 1:
+            return self.generateCell(indexPath: indexPath,
+                                     data: about?.pokedex,
+                                     infoType: .pokedexData,
+                                     text: "Pokédex Data",
+                                     colorName: basicInfo?.types[0])
         case 2:
             return self.generateCell(indexPath: indexPath,
                                      data: about?.training,
@@ -182,15 +295,15 @@ extension PokemonViewController {
         self.aboutBackgroundView.backgroundColor = .clear
         self.statsBackgroundView.backgroundColor = .clear
 
-        self.aboutButtonOutlet.setTitle("About", for: .normal)
-        self.statsButtonOutlet.setTitle("Stats", for: .normal)
+        self.aboutButton.setTitle("About", for: .normal)
+        self.statsButton.setTitle("Stats", for: .normal)
 
-        self.aboutButtonOutlet.tintColor = .white
-        self.statsButtonOutlet.tintColor = .white
+        self.aboutButton.tintColor = .white
+        self.statsButton.tintColor = .white
 
-        let fontSize = self.aboutButtonOutlet.titleLabel?.font.pointSize ?? 0
+        let fontSize = self.aboutButton.titleLabel?.font.pointSize ?? 0
 
-        self.aboutButtonOutlet.configuration?.titleTextAttributesTransformer
+        self.aboutButton.configuration?.titleTextAttributesTransformer
         = UIConfigurationTextAttributesTransformer { incoming in
             var outgoing = incoming
             outgoing.font = UIFont.systemFont(ofSize: fontSize, weight: .bold)
@@ -200,8 +313,8 @@ extension PokemonViewController {
         let pokeBallIamge = UIImage(named: "image.pokeball")
         let tintedImage = pokeBallIamge?.withRenderingMode(.alwaysTemplate)
 
-        self.aboutBackgorundImage.image = tintedImage?.maskWithGradientColor2(.white)
-        self.aboutBackgorundImage.alpha = 0.45
+        self.aboutBackgroundImage.image = tintedImage?.maskWithGradientColor2(.white)
+        self.aboutBackgroundImage.alpha = 0.45
 
         self.statsBackgroundImage.image = tintedImage?.maskWithGradientColor2(.white)
         self.statsBackgroundImage.alpha = 0.45
@@ -210,42 +323,23 @@ extension PokemonViewController {
     }
 
     func switchButtonStyle(_ selected: PokemonViewSelection) {
-        let fontSize = self.aboutButtonOutlet.titleLabel?.font.pointSize ?? 0
+        let fontSize = self.aboutButton.titleLabel?.font.pointSize ?? 0
 
-        self.aboutButtonOutlet.configuration?.titleTextAttributesTransformer
-        = UIConfigurationTextAttributesTransformer { incoming in
-            var outgoing = incoming
-            outgoing.font = UIFont.systemFont(ofSize: fontSize, weight: .regular)
-            return outgoing
-        }
-        self.statsButtonOutlet.configuration?.titleTextAttributesTransformer
-        = UIConfigurationTextAttributesTransformer { incoming in
-            var outgoing = incoming
-            outgoing.font = UIFont.systemFont(ofSize: fontSize, weight: .regular)
-            return outgoing
-        }
+        self.aboutButton.titleLabel?.font = UIFont.systemFont(ofSize: fontSize, weight: .regular)
+        self.statsButton.titleLabel?.font = UIFont.systemFont(ofSize: fontSize, weight: .regular)
 
-        self.aboutBackgorundImage.isHidden = true
+        self.aboutBackgroundImage.isHidden = true
         self.statsBackgroundImage.isHidden = true
 
         switch selected {
         case .about:
-            print("got here")
-            self.aboutButtonOutlet.configuration?.titleTextAttributesTransformer
-            = UIConfigurationTextAttributesTransformer { incoming in
-                var outgoing = incoming
-                outgoing.font = UIFont.systemFont(ofSize: fontSize, weight: .bold)
-                return outgoing
-            }
-            self.aboutBackgorundImage.comingFromRight(containerView: self.aboutButtonOutlet)
+            self.aboutButton.titleLabel?.font = UIFont.systemFont(ofSize: fontSize, weight: .bold)
+            self.aboutBackgroundImage.comingFromRight(containerView: self.aboutButton)
+            self.selectedView = .about
         case .stats:
-            self.statsButtonOutlet.configuration?.titleTextAttributesTransformer
-            = UIConfigurationTextAttributesTransformer { incoming in
-                var outgoing = incoming
-                outgoing.font = UIFont.systemFont(ofSize: fontSize, weight: .bold)
-                return outgoing
-            }
-            self.statsBackgroundImage.comingFromLeft(containerView: self.statsButtonOutlet)
+            self.statsButton.titleLabel?.font = UIFont.systemFont(ofSize: fontSize, weight: .bold)
+            self.statsBackgroundImage.comingFromLeft(containerView: self.statsButton)
+            self.selectedView = .stats
         }
     }
 }
@@ -262,4 +356,5 @@ enum AboutPokemonInfoType: String {
     case training
     case breeding
     case numbers
+    case weaknessess
 }

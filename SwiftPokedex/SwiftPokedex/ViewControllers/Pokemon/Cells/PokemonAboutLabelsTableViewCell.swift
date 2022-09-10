@@ -1,6 +1,6 @@
 //
 //  PokemonAboutLabelsTableViewCell.swift
-//  SwiftPokedex
+ //  SwiftPokedex
 //
 //  Created by Matheus Polonia on 24/08/22.
 //
@@ -10,17 +10,79 @@ import Foundation
 
 class PokemonAboutLabelsTableViewCell: UITableViewCell {
 
+    let identifier: String = "PokemonAboutLabelsCell"
+
     var data: Any?
     var infoType: AboutPokemonInfoType?
     var row: Int?
     var text: String?
     var color: UIColor?
 
-    @IBOutlet weak var dataTitleLabel: UILabel!
-    @IBOutlet weak var firstInfoLabel: UILabel!
-    @IBOutlet weak var firstInfoSubLabel: UILabel!
+    internal let dataTitleLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    internal let firstInfoLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    internal let secondInfoSubLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        return label
+    }()
 
-    @IBOutlet weak var infoLabelsStack: UIStackView!
+    internal let infoLabelsStack: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.distribution = .fillProportionally
+        stackView.alignment = .leading
+        stackView.spacing = 0
+        stackView.backgroundColor = .clear
+        return stackView
+    }()
+
+    internal let cellStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.alignment = .center
+        stackView.spacing = 0
+        stackView.backgroundColor = .clear
+        return stackView
+    }()
+
+    internal func addSubviews() {
+        self.contentView.addSubview(self.cellStackView)
+
+        self.cellStackView.addArrangedSubview(self.dataTitleLabel)
+        self.cellStackView.addArrangedSubview(self.infoLabelsStack)
+
+        self.infoLabelsStack.addArrangedSubview(self.firstInfoLabel)
+        self.infoLabelsStack.addArrangedSubview(self.secondInfoSubLabel)
+    }
+
+    internal func setupConstraints() {
+        NSLayoutConstraint.activate([
+            self.cellStackView.leadingAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.leadingAnchor),
+            self.cellStackView.topAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.topAnchor),
+            self.cellStackView.bottomAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.bottomAnchor),
+            self.cellStackView.trailingAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.trailingAnchor),
+
+            self.dataTitleLabel.leadingAnchor.constraint(equalTo: self.cellStackView.layoutMarginsGuide.leadingAnchor),
+            self.dataTitleLabel.topAnchor.constraint(equalTo: self.cellStackView.layoutMarginsGuide.topAnchor),
+            self.dataTitleLabel.bottomAnchor.constraint(equalTo: self.cellStackView.layoutMarginsGuide.bottomAnchor),
+
+            self.infoLabelsStack.leadingAnchor.constraint(equalTo: self.dataTitleLabel.trailingAnchor),
+            self.infoLabelsStack.topAnchor.constraint(equalTo: self.cellStackView.topAnchor),
+            self.infoLabelsStack.trailingAnchor.constraint(equalTo: self.cellStackView.trailingAnchor),
+            self.infoLabelsStack.bottomAnchor.constraint(equalTo: self.cellStackView.bottomAnchor)
+        ])
+    }
 
     override func prepareForReuse() {
         self.row = 1
@@ -31,15 +93,19 @@ class PokemonAboutLabelsTableViewCell: UITableViewCell {
         self.firstInfoLabel.font = .systemFont(ofSize: 17)
         self.firstInfoLabel.textColor = .black
         self.infoLabelsStack.isHidden = false
+        self.infoLabelsStack.axis = .vertical
     }
 
     func setupData() {
-        self.firstInfoSubLabel.isHidden = true
+        self.addSubviews()
+        self.setupConstraints()
+        self.secondInfoSubLabel.isHidden = true
         if row ?? -1 == 0 && infoType != .flavorText {
             self.dataTitleLabel.textAlignment = .left
             self.dataTitleLabel.font = .systemFont(ofSize: 18, weight: .bold)
             self.dataTitleLabel.textColor = color ?? .black
             self.dataTitleLabel.text = text ?? ""
+            self.dataTitleLabel.numberOfLines = 0
             self.infoLabelsStack.isHidden = true
         } else {
             switch infoType {
@@ -81,9 +147,16 @@ class PokemonAboutLabelsTableViewCell: UITableViewCell {
         guard let data = data as? Breeding else { return }
         switch row {
         case 1:
+            self.infoLabelsStack.axis = .horizontal
+            self.infoLabelsStack.alignment = .center
+            self.infoLabelsStack.distribution = .fillEqually
+            self.secondInfoSubLabel.isHidden = false
             self.dataTitleLabel.text = "Gender"
             let genderChance = self.genderRatio(data.gender ?? 0)
-            self.firstInfoLabel.text = "♂\(genderChance.0)%, ♀\(genderChance.1)%"
+            self.firstInfoLabel.text = "♂\(genderChance.0)%"
+            self.firstInfoLabel.textColor = .systemBlue
+            self.secondInfoSubLabel.text = "♀\(genderChance.1)%"
+            self.secondInfoSubLabel.textColor = .systemPink
         case 2:
             self.dataTitleLabel.text = "Egg Groups"
             var eggGroups: String = ""
@@ -138,19 +211,40 @@ class PokemonAboutLabelsTableViewCell: UITableViewCell {
             self.dataTitleLabel.text = "Weight"
             self.firstInfoLabel.text = "\(data.weight ?? 0)kg"
         case 4:
-            self.firstInfoSubLabel.isHidden = false
+            self.secondInfoSubLabel.isHidden = false
             let abilitiesStrings = self.createAbilitiesString(data.abilities)
 
             self.dataTitleLabel.text = "Abilities"
             self.firstInfoLabel.text = abilitiesStrings.0
             if abilitiesStrings.1.isEmpty {
-                self.firstInfoSubLabel.isHidden = true
+                self.secondInfoSubLabel.isHidden = true
             } else {
-                self.firstInfoSubLabel.text = abilitiesStrings.1
+                self.secondInfoSubLabel.text = abilitiesStrings.1
             }
+        case 5:
+            self.setupWeaknessess(data)
         default:
             return
         }
+    }
+
+    fileprivate func setupWeaknessess(_ data: PokedexData) {
+        self.dataTitleLabel.text = "Weaknessess"
+        let fullString = NSMutableAttributedString(string: "")
+
+        for weaknesses in data.weaknesses ?? [] {
+            let imageAttachment = NSTextAttachment()
+            imageAttachment.image = UIImage(named: "badge.\(weaknesses)")!
+                .imageWithSpacing(insets: UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4))!
+                .withBackground(color: UIColor(named: "type.\(weaknesses)")!)
+                .withRoundedCornersSize(cornerRadius: 4)
+            let imageString = NSAttributedString(attachment: imageAttachment)
+            fullString.append(imageString)
+            fullString.append(NSAttributedString(string: "  "))
+        }
+
+        self.firstInfoLabel.attributedText = fullString
+        self.firstInfoLabel.numberOfLines = 0
     }
 
     override func awakeFromNib() {
@@ -227,4 +321,58 @@ class PokemonAboutLabelsTableViewCell: UITableViewCell {
         return newOne
     }
 
+}
+
+extension UIImage {
+    func withBackground(color: UIColor, opaque: Bool = true) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(CGSize(width: size.width * 1.5, height: size.height * 1.5),
+                                               opaque,
+                                               scale)
+
+        guard let ctx = UIGraphicsGetCurrentContext(),
+              let image = cgImage
+        else { return self }
+        defer { UIGraphicsEndImageContext() }
+
+        let rect = CGRect(origin: .zero, size: CGSize(width: size.width * 1.5, height: size.height * 1.5))
+        ctx.setFillColor(color.cgColor)
+        ctx.fill(rect)
+        ctx.concatenate(CGAffineTransform(a: 1, b: 0, c: 0, d: -1, tx: 0, ty: size.height * 1.5))
+        ctx.draw(image, in: rect)
+
+        return UIGraphicsGetImageFromCurrentImageContext() ?? self
+    }
+
+    func withRoundedCornersSize(cornerRadius: Float) -> UIImage? {
+        let imageView = UIImageView(image: self)
+
+        // Begin a new image that will be the new image with the rounded corners
+        // (here with the size of an UIImageView)
+        UIGraphicsBeginImageContextWithOptions(imageView.bounds.size, false, 1.0)
+
+        // Add a clip before drawing anything, in the shape of an rounded rect
+        UIBezierPath(roundedRect: imageView.bounds, cornerRadius: CGFloat(cornerRadius)).addClip()
+        // Draw your image
+        self.draw(in: imageView.bounds)
+
+        // Get the image, here setting the UIImageView image
+        imageView.image = UIGraphicsGetImageFromCurrentImageContext()
+
+        // Lets forget about that we were drawing
+        UIGraphicsEndImageContext()
+
+        return imageView.image
+    }
+
+    func imageWithSpacing(insets: UIEdgeInsets) -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(
+            CGSize(width: self.size.width + insets.left + insets.right,
+                   height: self.size.height + insets.top + insets.bottom), false, self.scale)
+        UIGraphicsGetCurrentContext()
+        let origin = CGPoint(x: insets.left, y: insets.top)
+        self.draw(at: origin)
+        let imageWithInsets = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return imageWithInsets
+    }
 }

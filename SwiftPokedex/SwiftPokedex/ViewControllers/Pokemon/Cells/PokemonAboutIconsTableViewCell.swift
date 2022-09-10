@@ -9,6 +9,8 @@ import UIKit
 
 class PokemonAboutIconsTableViewCell: UITableViewCell {
 
+    let identifier: String = "PokemonAboutIconsCell"
+
     var weaknesses: [String]?
 
     @IBOutlet weak var titleLabel: UILabel!

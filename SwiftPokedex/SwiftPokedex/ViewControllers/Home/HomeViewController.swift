@@ -16,7 +16,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(HomePokemonTableViewCell.self, forCellReuseIdentifier: HomePokemonTableViewCell().identifier)
-        tableView.allowsSelection = false
+        tableView.allowsSelection = true
         tableView.separatorStyle = .singleLine
         tableView.backgroundColor = .white
         tableView.delegate = self
@@ -69,30 +69,33 @@ extension HomeViewController {
         }
         customCell.pokemon = pokeBasicInfo
         customCell.setupData()
-//        let bgColorView = UIView()
-//        bgColorView.backgroundColor = .clear
-//        customCell.selectedBackgroundView = bgColorView
-
         return customCell
     }
 
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        performSegue(withIdentifier: "pokemonViewSegue", sender: indexPath)
-//        tableView.deselectRow(at: indexPath, animated: false)
-//    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let viewController = PokemonViewController()
+        guard let pokeId = pokmeonsBasicInfo[indexPath.row]?.nationalNumber,
+              let basicInfo = pokmeonsBasicInfo[indexPath.row]
+        else {fatalError("god help me")}
+        let aboutPkm = self.pokeAPI.getAbout(pokeId, basicInfo)
+        viewController.about = aboutPkm
+        viewController.basicInfo = self.pokmeonsBasicInfo[indexPath.row]
+        self.navigationController?.pushViewController(viewController, animated: true)
+        tableView.deselectRow(at: indexPath, animated: false)
+    }
 
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//        if segue.identifier == "pokemonViewSegue" {
-//            guard let indexPath = sender as? IndexPath else {fatalError("IndexPath not found")}
-//            let pkmnVC = segue.destination as? PokemonViewController
-//            guard let pokeId = pokmeonsBasicInfo[indexPath.row]?.nationalNumber,
-//                  let basicInfo = pokmeonsBasicInfo[indexPath.row]
-//            else {fatalError("god help me")}
-//            let aboutPkm = self.pokeAPI.getAbout(pokeId, basicInfo)
-//            pkmnVC?.about = aboutPkm
-//            pkmnVC?.basicInfo = self.pokmeonsBasicInfo[indexPath.row]
-//
-//        }
-//    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "pokemonViewSegue" {
+            guard let indexPath = sender as? IndexPath else {fatalError("IndexPath not found")}
+            let pkmnVC = segue.destination as? PokemonViewController
+            guard let pokeId = pokmeonsBasicInfo[indexPath.row]?.nationalNumber,
+                  let basicInfo = pokmeonsBasicInfo[indexPath.row]
+            else {fatalError("god help me")}
+            let aboutPkm = self.pokeAPI.getAbout(pokeId, basicInfo)
+            pkmnVC?.about = aboutPkm
+            pkmnVC?.basicInfo = self.pokmeonsBasicInfo[indexPath.row]
+
+        }
+    }
 
 }

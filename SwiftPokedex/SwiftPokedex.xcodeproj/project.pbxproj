@@ -149,8 +149,8 @@
 		C081013428B5916400BFE612 /* Home */ = {
 			isa = PBXGroup;
 			children = (
-				C0E23F4D28C820F1006F6CE2 /* Cells */,
 				C081013528B5919300BFE612 /* HomeViewController.swift */,
+				C0E23F4D28C820F1006F6CE2 /* Cells */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -158,8 +158,8 @@
 		C081013A28B6DD3600BFE612 /* Pokemon */ = {
 			isa = PBXGroup;
 			children = (
-				C081013D28B6DD5600BFE612 /* Cells */,
 				C081013B28B6DD4900BFE612 /* PokemonViewController.swift */,
+				C081013D28B6DD5600BFE612 /* Cells */,
 			);
 			path = Pokemon;
 			sourceTree = "<group>";

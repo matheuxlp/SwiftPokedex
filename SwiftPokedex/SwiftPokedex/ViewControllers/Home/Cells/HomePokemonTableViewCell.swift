@@ -27,12 +27,7 @@ class HomePokemonTableViewCell: UITableViewCell {
 
     internal let firstTypeStackView: UIStackView = TypeStackView()
 
-    internal let firstTypeImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.backgroundColor = .clear
-        return imageView
-    }()
+    internal let firstTypeImageView: UIImageView = HomePokemonImageView()
 
     internal let firstTypeLabel: UILabel = HomePokemonCellLabel(size: 14, color: .white)
 
@@ -113,7 +108,6 @@ class HomePokemonTableViewCell: UITableViewCell {
         self.setupConstraints()
 
         if let poke = pokemon {
-            print("got here")
             self.typeBackgroundView.backgroundColor = UIColor(named: "background.\(poke.types[0])")
             let imgUrl: URL = URL(string: poke.artUrl ?? "")!
             self.pokemonImageView.kf.setImage(with: imgUrl)

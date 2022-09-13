@@ -143,14 +143,18 @@ class PokemonAboutLabelsTableViewCell: UITableViewCell {
         self.firstInfoLabel.textColor = .systemGray
     }
 
+    fileprivate func showSecondLabelSide() {
+        self.infoLabelsStack.axis = .horizontal
+        self.infoLabelsStack.alignment = .center
+        self.infoLabelsStack.distribution = .fillEqually
+        self.secondInfoSubLabel.isHidden = false
+    }
+
     fileprivate func setupBreeding() {
         guard let data = data as? Breeding else { return }
         switch row {
         case 1:
-            self.infoLabelsStack.axis = .horizontal
-            self.infoLabelsStack.alignment = .center
-            self.infoLabelsStack.distribution = .fillEqually
-            self.secondInfoSubLabel.isHidden = false
+            self.showSecondLabelSide()
             self.dataTitleLabel.text = "Gender"
             let genderChance = self.genderRatio(data.gender ?? 0)
             self.firstInfoLabel.text = "♂\(genderChance.0)%"
@@ -168,8 +172,12 @@ class PokemonAboutLabelsTableViewCell: UITableViewCell {
             eggGroups.removeLast()
             self.firstInfoLabel.text = "\(eggGroups)"
         case 3:
+            self.showSecondLabelSide()
+            self.infoLabelsStack.alignment = .leading
+            self.infoLabelsStack.distribution = .fill
             self.dataTitleLabel.text = "Egg Cycles"
-            self.firstInfoLabel.text = "\(data.eggCycles ?? 0) (\((data.eggCycles ?? 0) * 257) steps)"
+            self.firstInfoLabel.text = "\(data.eggCycles ?? 0) "
+            self.secondInfoSubLabel.text = "(\((data.eggCycles ?? 0) * 257) steps)"
         default:
             return
         }
@@ -185,14 +193,28 @@ class PokemonAboutLabelsTableViewCell: UITableViewCell {
             self.dataTitleLabel.text = "Catch Rate"
             self.firstInfoLabel.text = "\(data.catchRate ?? 0)"
         case 3:
+            self.showSecondLabelSide()
+            self.infoLabelsStack.alignment = .leading
+            self.infoLabelsStack.distribution = .fill
             self.dataTitleLabel.text = "Base Friendship"
             self.firstInfoLabel.text = "\(data.baseFriendship ?? 0)"
+            let baseFriendShip = data.baseFriendship ?? 0
+            switch baseFriendShip {
+            case _ where baseFriendShip == 50:
+                self.secondInfoSubLabel.text = "(Normal)"
+            case _ where baseFriendShip > 50:
+                self.secondInfoSubLabel.text = "(High)"
+            default:
+                self.secondInfoSubLabel.text = "(Low)"
+            }
         case 4:
             self.dataTitleLabel.text = "Base Exp"
             self.firstInfoLabel.text = "\(data.baseExp ?? 0)"
         case 5:
             self.dataTitleLabel.text = "Growth Rate"
-            self.firstInfoLabel.text = "\(data.growthRate?.replacingOccurrences(of: "-", with: " ") ?? "nil")"
+            let strings = data.growthRate?.split(separator: "-") ?? []
+            self.firstInfoLabel.text = "\(String.init(strings[0]).capitalizingFirstLetter()) "
+            + "\(strings.count > 1 ? String.init(strings[1]).capitalizingFirstLetter() : "")"
         default:
             return
         }
@@ -345,22 +367,11 @@ extension UIImage {
 
     func withRoundedCornersSize(cornerRadius: Float) -> UIImage? {
         let imageView = UIImageView(image: self)
-
-        // Begin a new image that will be the new image with the rounded corners
-        // (here with the size of an UIImageView)
         UIGraphicsBeginImageContextWithOptions(imageView.bounds.size, false, 1.0)
-
-        // Add a clip before drawing anything, in the shape of an rounded rect
         UIBezierPath(roundedRect: imageView.bounds, cornerRadius: CGFloat(cornerRadius)).addClip()
-        // Draw your image
         self.draw(in: imageView.bounds)
-
-        // Get the image, here setting the UIImageView image
         imageView.image = UIGraphicsGetImageFromCurrentImageContext()
-
-        // Lets forget about that we were drawing
         UIGraphicsEndImageContext()
-
         return imageView.image
     }
 

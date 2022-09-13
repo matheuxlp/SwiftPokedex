@@ -78,24 +78,12 @@ extension HomeViewController {
               let basicInfo = pokmeonsBasicInfo[indexPath.row]
         else {fatalError("god help me")}
         let aboutPkm = self.pokeAPI.getAbout(pokeId, basicInfo)
+        let statsPkm = self.pokeAPI.getStats(pokeId, basicInfo)
         viewController.about = aboutPkm
+        viewController.stats = statsPkm
         viewController.basicInfo = self.pokmeonsBasicInfo[indexPath.row]
         self.navigationController?.pushViewController(viewController, animated: true)
         tableView.deselectRow(at: indexPath, animated: false)
-    }
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "pokemonViewSegue" {
-            guard let indexPath = sender as? IndexPath else {fatalError("IndexPath not found")}
-            let pkmnVC = segue.destination as? PokemonViewController
-            guard let pokeId = pokmeonsBasicInfo[indexPath.row]?.nationalNumber,
-                  let basicInfo = pokmeonsBasicInfo[indexPath.row]
-            else {fatalError("god help me")}
-            let aboutPkm = self.pokeAPI.getAbout(pokeId, basicInfo)
-            pkmnVC?.about = aboutPkm
-            pkmnVC?.basicInfo = self.pokmeonsBasicInfo[indexPath.row]
-
-        }
     }
 
 }

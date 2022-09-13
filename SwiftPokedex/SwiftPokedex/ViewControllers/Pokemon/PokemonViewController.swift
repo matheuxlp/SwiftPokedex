@@ -14,6 +14,7 @@ class PokemonViewController: UIViewController {
 
     var basicInfo: PokemonBasicInfo?
     var about: About?
+    var stats: Stats?
 
     fileprivate let aboutBackgroundView: UIView = {
         let uiView = UIView()
@@ -69,8 +70,10 @@ class PokemonViewController: UIViewController {
         tableView.dataSource = self
         tableView.register(PokemonAboutLabelsTableViewCell.self,
                            forCellReuseIdentifier: PokemonAboutLabelsTableViewCell().identifier)
-        tableView.register(PokemonAboutIconsTableViewCell.self,
-                           forCellReuseIdentifier: PokemonAboutIconsTableViewCell().identifier)
+        tableView.register(PokemonBaseStatsTableViewCell.self,
+                           forCellReuseIdentifier: PokemonBaseStatsTableViewCell().identifier)
+        tableView.register(PokemonDefensesTableViewCell.self,
+                           forCellReuseIdentifier: PokemonDefensesTableViewCell().identifier)
         return tableView
     }()
 
@@ -166,11 +169,17 @@ class PokemonViewController: UIViewController {
     @objc func aboutButtonAction(_ sender: UIButton) {
         if self.selectedView != .about {
             self.switchButtonStyle(.about)
+            DispatchQueue.main.async {
+                self.aboutTableView.reloadData()
+            }
         }
     }
     @objc func statsButtonAction(_ sender: UIButton) {
         if self.selectedView != .stats {
             self.switchButtonStyle(.stats)
+            DispatchQueue.main.async {
+                self.aboutTableView.reloadData()
+            }
         }
     }
 
@@ -197,55 +206,110 @@ class PokemonViewController: UIViewController {
 extension PokemonViewController: UITableViewDataSource, UITableViewDelegate {
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 5
+        if self.selectedView == .about {
+            return 5
+        } else {
+            return 2
+        }
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch section {
-        case 0:
-            return 1
-        case 1:
-            return 6
-        case 2:
-            return 6
-        case 3:
-            return 4
-        case 4:
-            return self.about?.pokedexNumbers.count ?? 0
-        default:
-            return 0
+        if self.selectedView == .about {
+            switch section {
+            case 0:
+                return 1
+            case 1:
+                return 6
+            case 2:
+                return 6
+            case 3:
+                return 4
+            case 4:
+                return self.about?.pokedexNumbers.count ?? 0
+            default:
+                return 0
+            }
+        } else {
+            switch section {
+            case 0:
+                return 9
+            case 1:
+                return 4
+            default:
+                return 0
+            }
         }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch indexPath.section {
-        case 0:
-            return self.generateCell(indexPath: indexPath, infoType: .flavorText, text: about?.flavorText)
-        case 1:
-            return self.generateCell(indexPath: indexPath,
-                                     data: about?.pokedex,
-                                     infoType: .pokedexData,
-                                     text: "Pokédex Data",
-                                     colorName: basicInfo?.types[0])
-        case 2:
-            return self.generateCell(indexPath: indexPath,
-                                     data: about?.training,
-                                     infoType: .training,
-                                     text: "Training",
-                                     colorName: basicInfo?.types[0])
-        case 3:
-            return self.generateCell(indexPath: indexPath,
-                                     data: about?.breeding,
-                                     infoType: .breeding,
-                                     text: "Breeding",
-                                     colorName: basicInfo?.types[0])
-        default:
-            return self.generateCell(indexPath: indexPath,
-                                     data: about?.pokedexNumbers,
-                                     infoType: .numbers,
-                                     text: "Pokédex Entry Number",
-                                     colorName: basicInfo?.types[0])
+        if self.selectedView == .about {
+            switch indexPath.section {
+            case 0:
+                return self.generateCell(indexPath: indexPath, infoType: .flavorText, text: about?.flavorText)
+            case 1:
+                return self.generateCell(indexPath: indexPath,
+                                         data: about?.pokedex,
+                                         infoType: .pokedexData,
+                                         text: "Pokédex Data",
+                                         colorName: basicInfo?.types[0])
+            case 2:
+                return self.generateCell(indexPath: indexPath,
+                                         data: about?.training,
+                                         infoType: .training,
+                                         text: "Training",
+                                         colorName: basicInfo?.types[0])
+            case 3:
+                return self.generateCell(indexPath: indexPath,
+                                         data: about?.breeding,
+                                         infoType: .breeding,
+                                         text: "Breeding",
+                                         colorName: basicInfo?.types[0])
+            default:
+                return self.generateCell(indexPath: indexPath,
+                                         data: about?.pokedexNumbers,
+                                         infoType: .numbers,
+                                         text: "Pokédex Entry Number",
+                                         colorName: basicInfo?.types[0])
+            }
+        } else {
+            if indexPath.section == 0 {
+                return self.generateStatsCell(indexPath: indexPath, colorName: basicInfo?.types[0])
+            } else {
+                return self.generateStatsCell(indexPath: indexPath, colorName: basicInfo?.types[0], stats: self.stats)
+            }
         }
+    }
+
+    fileprivate func generateStatsCell(indexPath: IndexPath,
+                                       colorName: String?,
+                                       stats: Stats?) -> PokemonDefensesTableViewCell {
+        let identifier = "PokemonDefensesCell"
+        guard let customCell = self.aboutTableView.dequeueReusableCell(
+            withIdentifier: identifier, for: indexPath) as? PokemonDefensesTableViewCell
+        else {
+            fatalError("There should be a cell with \(identifier) identifier.")
+        }
+        customCell.row = indexPath.row
+        customCell.color = UIColor(named: "type.\(colorName ?? "")")
+        customCell.stats = stats
+        customCell.setupData()
+
+        return customCell
+    }
+
+    fileprivate func generateStatsCell(indexPath: IndexPath, colorName: String?) -> PokemonBaseStatsTableViewCell {
+        let identifier = "PokemonBaseStatsCell"
+        guard let customCell = self.aboutTableView.dequeueReusableCell(
+            withIdentifier: identifier, for: indexPath) as? PokemonBaseStatsTableViewCell
+        else {
+            fatalError("There should be a cell with \(identifier) identifier.")
+        }
+        customCell.stats = self.stats
+        customCell.row = indexPath.row
+        customCell.color = UIColor(named: "type.\(colorName ?? "")")
+        customCell.setupData()
+
+        return customCell
     }
 
     fileprivate func generateCell(indexPath: IndexPath,
@@ -357,4 +421,9 @@ enum AboutPokemonInfoType: String {
     case breeding
     case numbers
     case weaknessess
+}
+
+enum TypeRow: String {
+    case first
+    case second
 }

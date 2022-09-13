@@ -64,4 +64,3 @@ struct TypeRelationDamage {
     let name: String
     var relation: String
 }
-

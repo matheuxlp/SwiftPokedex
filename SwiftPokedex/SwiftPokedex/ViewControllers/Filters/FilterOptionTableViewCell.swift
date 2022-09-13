@@ -9,6 +9,8 @@ import UIKit
 
 class FilterOptionTableViewCell: UITableViewCell {
 
+    let identifier: String = "FilterOptionCell"
+
     func setupData() {
         print("got here")
     }

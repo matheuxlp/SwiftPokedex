@@ -449,7 +449,7 @@ extension PokeAPI {
         // print(damageRelations)
     }
 
-    func getStats(_ identifier: Int, _ basicInfo: PokemonBasicInfo) {
+    func getStats(_ identifier: Int, _ basicInfo: PokemonBasicInfo) -> Stats {
         let pokemonData = self.loadData(identifier, dataType: .pokemon)
         // let speciesData = self.loadData(identifier, dataType: .species)
         // print(about.pokedexNumbers)
@@ -459,6 +459,7 @@ extension PokeAPI {
         let defense = self.damageRelations(basicInfo.types)
 
         let stats = Stats(base: base, min: min, max: max, defense: defense)
+        return stats
     }
 }
 

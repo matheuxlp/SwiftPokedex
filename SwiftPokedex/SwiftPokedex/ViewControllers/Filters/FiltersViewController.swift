@@ -9,11 +9,20 @@ import UIKit
 
 class FiltersViewController: UIViewController {
 
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var instructionsLabel: UILabel!
-
-    @IBOutlet weak var resetButtonOutlet: UIButton!
-    @IBOutlet weak var appleButtonOutlet: UIButton!
+    fileprivate lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.allowsSelection = false
+        tableView.separatorStyle = .singleLine
+        tableView.backgroundColor = .white
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 60
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(FilterOptionTableViewCell.self,
+                           forCellReuseIdentifier: FilterOptionTableViewCell().identifier)
+        return tableView
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,7 +30,7 @@ class FiltersViewController: UIViewController {
     }
 }
 
-extension FiltersViewController: UITableViewDataSource {
+extension FiltersViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }

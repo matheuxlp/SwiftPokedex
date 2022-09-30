@@ -62,14 +62,38 @@ class PokeAPI {
 
 extension PokeAPI {
 
-    public func loadTenPokemons() -> [PokemonBasicInfo] {
+    public func loadPokemons(totalLoaded: Int = 0) -> [PokemonBasicInfo] {
         var pokes: [PokemonBasicInfo] = []
-        for pokeId in 1...10 {
+        for pokeId in (totalLoaded + 1)...(totalLoaded + 29) {
             if let poke = self.getBasicInfo(identifier: pokeId) {
                 pokes.append(poke)
             }
         }
+        return pokes
+    }
 
+    public func loadPokemons(nameFilter: String = "", idFilter: String = "", totalLoaded: Int = 0, lastId: Int = 0) -> [PokemonBasicInfo] {
+        print(idFilter)
+        var pokes: [PokemonBasicInfo] = []
+        var countToLoad = 30 - totalLoaded
+        var pokeId = lastId + 1
+        while countToLoad != 0 {
+            if pokeId > 905 {
+                break
+            }
+            if let poke = self.getBasicInfo(identifier: pokeId) {
+                if "\(poke.nationalNumber ?? -1)".contains(idFilter) {
+                    countToLoad -= 1
+                    pokes.append(poke)
+                    pokeId += Int(idFilter) ?? 1
+                    continue
+                } else if (poke.name ?? "").contains(nameFilter.lowercased()) {
+                    countToLoad -= 1
+                    pokes.append(poke)
+                }
+            }
+            pokeId += 1
+        }
         return pokes
     }
 }

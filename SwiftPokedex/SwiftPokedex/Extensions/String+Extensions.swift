@@ -15,4 +15,8 @@ extension String {
     mutating func capitalizeFirstLetter() {
       self = self.capitalizingFirstLetter()
     }
+
+    var isInt: Bool {
+        return Int(self) != nil
+    }
 }

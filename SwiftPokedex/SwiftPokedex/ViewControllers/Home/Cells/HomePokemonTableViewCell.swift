@@ -107,6 +107,10 @@ class HomePokemonTableViewCell: UITableViewCell {
         self.addSubviews()
         self.setupConstraints()
 
+        let bgColorView = UIView()
+        bgColorView.backgroundColor = self.contentView.backgroundColor
+        self.selectedBackgroundView = bgColorView
+
         if let poke = pokemon {
             self.typeBackgroundView.backgroundColor = UIColor(named: "background.\(poke.types[0])")
             let imgUrl: URL = URL(string: poke.artUrl ?? "")!

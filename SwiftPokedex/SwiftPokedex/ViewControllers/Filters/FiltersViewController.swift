@@ -27,10 +27,30 @@ class FiltersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.dataSource = self
+        self.addSubviews()
+        self.setupConstraints()
+    }
+
+    fileprivate func addSubviews() {
+        self.view.addSubview(self.tableView)
+    }
+
+    fileprivate func setupConstraints() {
+        NSLayoutConstraint.activate([
+            self.tableView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            self.tableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            self.tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            self.tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+        ])
     }
 }
 
 extension FiltersViewController: UITableViewDataSource, UITableViewDelegate {
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60
+    }
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
@@ -40,7 +60,7 @@ extension FiltersViewController: UITableViewDataSource, UITableViewDelegate {
 
         switch indexPath.section {
         case 0...3:
-            identifier = "FilterOptionTableViewCell"
+            identifier = FilterOptionTableViewCell().identifier
             guard let customCell = self.tableView.dequeueReusableCell(withIdentifier: identifier,
                                                                       for: indexPath) as? FilterOptionTableViewCell
             else { fatalError("There should be a cell with \(identifier) identifier.") }

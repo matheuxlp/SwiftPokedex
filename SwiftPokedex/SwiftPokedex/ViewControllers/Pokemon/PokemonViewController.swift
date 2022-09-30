@@ -12,7 +12,11 @@ import SwiftUI
 
 class PokemonViewController: UIViewController {
 
+    let pokeAPI = PokeAPI()
+
     var basicInfo: PokemonBasicInfo?
+    var pokeId: Int?
+
     var about: About?
     var stats: Stats?
 
@@ -87,10 +91,11 @@ class PokemonViewController: UIViewController {
         return stackView
     }()
 
+    fileprivate let loaderView: LoaderView = LoaderView()
+
     fileprivate var selectedView: PokemonViewSelection = .about
 
     fileprivate func addSubiviews() {
-
         self.view.addSubview(self.selectionStackView)
         self.view.addSubview(self.aboutTableView)
         self.selectionStackView.addArrangedSubview(self.aboutBackgroundView)
@@ -103,6 +108,9 @@ class PokemonViewController: UIViewController {
 
         self.aboutBackgroundView.addSubview(self.aboutButton)
         self.statsBackgroundView.addSubview(self.statsButton)
+
+        self.view.addSubview(self.loaderView)
+
     }
 
     fileprivate func setupConstraints() {
@@ -147,12 +155,29 @@ class PokemonViewController: UIViewController {
 
             self.aboutTableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
             self.aboutTableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            self.aboutTableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+            self.aboutTableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+
+            self.loaderView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            self.loaderView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            self.loaderView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            self.loaderView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
         ])
+    }
+
+    private func fetchData() {
+        guard let basicInfo = self.basicInfo else {return}
+        self.loaderView.showLoader()
+        DispatchQueue.main.async {
+            self.about = self.pokeAPI.getAbout(self.pokeId ?? 0, basicInfo)
+            self.stats = self.pokeAPI.getStats(self.pokeId ?? 0, basicInfo)
+            self.aboutTableView.reloadData()
+            self.loaderView.hideLoader()
+        }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.fetchData()
         self.view.backgroundColor = UIColor(named: "background.\(basicInfo?.types[0] ?? "")")
 
         self.setupCustomTitle()

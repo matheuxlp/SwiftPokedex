@@ -71,4 +71,3 @@ enum PokedexGame: String {
     case ss = "(Sword/Shield)"
 }
 // swiftlint:enable all
-

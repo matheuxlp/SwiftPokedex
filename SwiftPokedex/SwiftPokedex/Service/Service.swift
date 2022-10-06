@@ -58,76 +58,9 @@ class PokeAPI {
     }
 }
 
-// MARK: - LoadData
-
-extension PokeAPI {
-
-    public func loadPokemons(totalLoaded: Int = 0) -> [PokemonBasicInfo] {
-        var pokes: [PokemonBasicInfo] = []
-        for pokeId in (totalLoaded + 1)...(totalLoaded + 29) {
-            if let poke = self.getBasicInfo(identifier: pokeId) {
-                pokes.append(poke)
-            }
-        }
-        return pokes
-    }
-
-    public func loadPokemons(nameFilter: String = "", idFilter: String = "", totalLoaded: Int = 0, lastId: Int = 0) -> [PokemonBasicInfo] {
-        print(idFilter)
-        var pokes: [PokemonBasicInfo] = []
-        var countToLoad = 30 - totalLoaded
-        var pokeId = lastId + 1
-        while countToLoad != 0 {
-            if pokeId > 905 {
-                break
-            }
-            if let poke = self.getBasicInfo(identifier: pokeId) {
-                if "\(poke.nationalNumber ?? -1)".contains(idFilter) {
-                    countToLoad -= 1
-                    pokes.append(poke)
-                    pokeId += Int(idFilter) ?? 1
-                    continue
-                } else if (poke.name ?? "").contains(nameFilter.lowercased()) {
-                    countToLoad -= 1
-                    pokes.append(poke)
-                }
-            }
-            pokeId += 1
-        }
-        return pokes
-    }
-}
-
 // MARK: - Helper Functions
 
 extension PokeAPI {
-
-    private func getWeaknesses(_ types: [String]) -> [String]? {
-        var weaknesses: [String] = []
-        var halfDamageFrom: [String] = []
-        var doubleDamageFrom: [String] = []
-        for type in types {
-            let typeData = self.loadData(type, dataType: .type)
-            guard let damageRelations = typeData["damage_relations"] as? [String: Any],
-                  let HDFData = damageRelations["half_damage_from"] as? [[String: Any]],
-                  let DDFData = damageRelations["double_damage_from"] as? [[String: Any]]
-            else {return nil}
-            for HDFItem in HDFData {
-                guard let name = HDFItem["name"] as? String else {return nil}
-                halfDamageFrom.append(name)
-            }
-            for DDFItem in DDFData {
-                guard let name = DDFItem["name"] as? String else {return nil}
-                doubleDamageFrom.append(name)
-            }
-        }
-        for doubleDamage in doubleDamageFrom {
-            if !halfDamageFrom.contains(where: {$0 == doubleDamage}) {
-                weaknesses.append(doubleDamage)
-            }
-        }
-        return weaknesses
-    }
 
     func getPokedexEntry(_ speciesName: String, _ pokedexData: [String: Any]) -> PokedexEntry? {
         let identification = pokedexData["id"] as? Int ?? -1
@@ -210,48 +143,41 @@ extension PokeAPI {
         return nil
     }
 
-    func getBasicInfo(identifier: Int) -> PokemonBasicInfo? {
-        let pokemonData: [String: Any] = self.loadData(identifier, dataType: .pokemon)
-        // guard
-        let number = pokemonData["id"] as? Int
-        let name = pokemonData["name"] as? String
-        let height = pokemonData["height"] as? Int
-        let weight = pokemonData["weight"] as? Int
-        let typesInfo = pokemonData["types"] as? [[String: Any]] ?? []
-        var types: [String] = []
-        for typeInfo in typesInfo {
-            guard let type = typeInfo["type"] as? [String: Any],
-                  let name = type["name"] as? String
-            else {return nil}
-            types.append(name)
+    private func readLocalFile(forName name: String) -> Data? {
+        do {
+            if let bundlePath = Bundle.main.path(forResource: name,
+                                                 ofType: "json"),
+                let jsonData = try String(contentsOfFile: bundlePath).data(using: .utf8) {
+                return jsonData
+            }
+        } catch {
+            print(error)
         }
-        let artURL: String? = self.getArtURL(pokemonData["sprites"] as? [String: Any] ?? [:])
-        guard let weaknesses = self.getWeaknesses(types) else {return nil}
-        let basicInfo: PokemonBasicInfo = PokemonBasicInfo(nationalNumber: number, name: name, height: height,
-                                                           weight: weight, types: types,
-                                                           weaknesses: weaknesses, artUrl: artURL)
-        return basicInfo
+
+        return nil
+    }
+
+    private func parse(jsonData: Data) -> [PokemonBasicInfo] {
+        do {
+            let decodedData = try JSONDecoder().decode([PokemonBasicInfo].self, from: jsonData)
+            return decodedData
+        } catch {
+            print("decode error")
+        }
+        return []
+    }
+
+    func getBasicInfo() -> [PokemonBasicInfo]? {
+        if let localData = self.readLocalFile(forName: "basicInfoData") {
+            return self.parse(jsonData: localData)
+        }
+        return nil
     }
 }
 
 // MARK: - About Section
 
 extension PokeAPI {
-//    private func getGenera(_ identifier: Int) {
-//        print("got here")
-//        let speciesData = self.loadData(identifier, dataType: .species)
-//        if let genera = speciesData["genera"] as? [[String: Any]] {
-//            for entry in genera {
-//                if let languageData = entry as? [String: Any] {
-//                    if let languageName = languageData["name"] as? String {
-//                        if languageName == "en" {
-//                            print("yeah")
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     private func getPokedexData(_ basicInfo: PokemonBasicInfo, _ pokemonData: [String: Any]) -> PokedexData {
         let abilitiesData = pokemonData["abilities"] as? [[String: Any]] ?? [[:]]

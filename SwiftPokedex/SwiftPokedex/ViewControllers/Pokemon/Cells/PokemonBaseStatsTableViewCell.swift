@@ -85,6 +85,7 @@ class PokemonBaseStatsTableViewCell: UITableViewCell {
         let progressView = UIProgressView()
         progressView.translatesAutoresizingMaskIntoConstraints = false
         progressView.progressTintColor = self.color
+        progressView.trackTintColor = .clear
         progressView.progress = 10
 
         return progressView
@@ -110,8 +111,6 @@ class PokemonBaseStatsTableViewCell: UITableViewCell {
             self.mainStackView.topAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.topAnchor),
             self.mainStackView.bottomAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.bottomAnchor),
             self.mainStackView.trailingAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.trailingAnchor)
-
-            //self.progressBar.leadingAnchor.constraint(equalTo: self.firstStackView.trailingAnchor, constant: 5),
         ])
     }
 
@@ -138,7 +137,7 @@ class PokemonBaseStatsTableViewCell: UITableViewCell {
             self.secondLabel.textColor = .systemGray
             self.thirdLabel.text = "\(min.healthPoints ?? 0)"
             self.forthLabel.text = "\(max.healthPoints ?? 0)"
-            self.progressBar.progress = Float(base.healthPoints ?? 0) / Float(max.healthPoints ?? 0)
+            self.progressBar.progress = Float(base.healthPoints ?? 0) / Float(max.healthPoints ?? 0) * 2
         case 2:
             self.firstLabel.text = "Attack"
             self.firstLabel.font = UIFont.systemFont(ofSize: 12)
@@ -146,7 +145,7 @@ class PokemonBaseStatsTableViewCell: UITableViewCell {
             self.secondLabel.textColor = .systemGray
             self.thirdLabel.text = "\(min.attack ?? 0)"
             self.forthLabel.text = "\(max.attack ?? 0)"
-            self.progressBar.progress = Float(base.attack ?? 0) / Float(max.attack ?? 0)
+            self.progressBar.progress = Float(base.attack ?? 0) / Float(max.attack ?? 0) * 2
         case 3:
             self.firstLabel.text = "Defense"
             self.firstLabel.font = UIFont.systemFont(ofSize: 12)
@@ -154,7 +153,7 @@ class PokemonBaseStatsTableViewCell: UITableViewCell {
             self.secondLabel.textColor = .systemGray
             self.thirdLabel.text = "\(min.defense ?? 0)"
             self.forthLabel.text = "\(max.defense ?? 0)"
-            self.progressBar.progress = Float(base.defense ?? 0) / Float(max.defense ?? 0)
+            self.progressBar.progress = Float(base.defense ?? 0) / Float(max.defense ?? 0) * 2
         case 4:
             self.firstLabel.text = "Sp. Atk"
             self.firstLabel.font = UIFont.systemFont(ofSize: 12)
@@ -162,7 +161,7 @@ class PokemonBaseStatsTableViewCell: UITableViewCell {
             self.secondLabel.textColor = .systemGray
             self.thirdLabel.text = "\(min.specialAttack ?? 0)"
             self.forthLabel.text = "\(max.specialAttack ?? 0)"
-            self.progressBar.progress = Float(base.specialAttack ?? 0) / Float(max.specialAttack ?? 0)
+            self.progressBar.progress = Float(base.specialAttack ?? 0) / Float(max.specialAttack ?? 0) * 2
         case 5:
             self.firstLabel.text = "Sp. Def"
             self.firstLabel.font = UIFont.systemFont(ofSize: 12)
@@ -170,7 +169,7 @@ class PokemonBaseStatsTableViewCell: UITableViewCell {
             self.secondLabel.textColor = .systemGray
             self.thirdLabel.text = "\(min.specialDefense ?? 0)"
             self.forthLabel.text = "\(max.specialDefense ?? 0)"
-            self.progressBar.progress = Float(base.specialDefense ?? 0) / Float(max.specialDefense ?? 0)
+            self.progressBar.progress = Float(base.specialDefense ?? 0) / Float(max.specialDefense ?? 0) * 2
         case 6:
             self.firstLabel.text = "Speed"
             self.firstLabel.font = UIFont.systemFont(ofSize: 12)
@@ -178,7 +177,7 @@ class PokemonBaseStatsTableViewCell: UITableViewCell {
             self.secondLabel.textColor = .systemGray
             self.thirdLabel.text = "\(min.speed ?? 0)"
             self.forthLabel.text = "\(max.speed ?? 0)"
-            self.progressBar.progress = Float(base.speed ?? 0) / Float(max.speed ?? 0)
+            self.progressBar.progress = Float(base.speed ?? 0) / Float(max.speed ?? 0) * 2
         case 7:
             self.firstLabel.text = "Total"
             self.firstLabel.font = UIFont.systemFont(ofSize: 12)

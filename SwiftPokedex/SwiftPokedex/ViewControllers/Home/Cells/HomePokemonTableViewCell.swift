@@ -103,6 +103,17 @@ class HomePokemonTableViewCell: UITableViewCell {
         self.secondTypeStackView.addArrangedSubview(self.secondTypeLabel)
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        self.firstTypeLabel.text = ""
+        self.firstTypeImageView.image = UIImage()
+        self.firstTypeStackView.backgroundColor = .clear
+        self.secondTypeStackView.isHidden = true
+        self.secondTypeLabel.text = ""
+        self.secondTypeImageView.image = UIImage()
+        self.secondTypeStackView.backgroundColor = .clear
+    }
+
     func setupData() {
         self.addSubviews()
         self.setupConstraints()

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PokemonBasicInfo {
+struct PokemonBasicInfo: Codable {
     let nationalNumber: Int?
     let name: String?
     let height: Int?

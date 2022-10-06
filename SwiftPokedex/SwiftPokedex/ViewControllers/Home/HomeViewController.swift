@@ -39,6 +39,8 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.searchController.searchBar.tintColor = .systemBlue
+        self.hideKeyboardWhenTappedAround()
         self.fetchData()
         self.addSubviews()
         self.setupConstraints()
@@ -53,7 +55,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
 
     func fetchData() {
-        self.pokemonsBasicInfo = pokeAPI.loadPokemons()
+        self.pokemonsBasicInfo = pokeAPI.getBasicInfo() ?? []
     }
 
     @objc func showFilters(sender: UIButton) {
@@ -75,6 +77,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
     private func setupNavigationBar() {
         self.navigationItem.title = "Pokédex"
         self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationController?.navigationBar.tintColor = .black
         let filterButton: UIButton = {
             let button = UIButton()
             button.setImage(UIImage(systemName: "slider.horizontal.3")?
@@ -165,61 +168,71 @@ extension HomeViewController {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let viewController = PokemonViewController()
-        var pokeId: Int?
-        var basicInfo: PokemonBasicInfo?
-        if isFiltering {
-            pokeId = filteredpokemonsBasicInfo[indexPath.row]?.nationalNumber
-            basicInfo = filteredpokemonsBasicInfo[indexPath.row]
+        if self.searchController.searchBar.isFirstResponder {
+            self.searchController.searchBar.resignFirstResponder()
         } else {
-            pokeId = pokemonsBasicInfo[indexPath.row]?.nationalNumber
-            basicInfo = pokemonsBasicInfo[indexPath.row]
+            let viewController = PokemonViewController()
+            var pokeId: Int?
+            var basicInfo: PokemonBasicInfo?
+            if isFiltering {
+                pokeId = filteredpokemonsBasicInfo[indexPath.row]?.nationalNumber
+                basicInfo = filteredpokemonsBasicInfo[indexPath.row]
+            } else {
+                pokeId = pokemonsBasicInfo[indexPath.row]?.nationalNumber
+                basicInfo = pokemonsBasicInfo[indexPath.row]
+            }
+            viewController.pokeId = pokeId
+            viewController.basicInfo = basicInfo
+            self.navigationController?.pushViewController(viewController, animated: true)
+            tableView.deselectRow(at: indexPath, animated: false)
         }
-        viewController.pokeId = pokeId
-        viewController.basicInfo = basicInfo
-        self.navigationController?.pushViewController(viewController, animated: true)
-        tableView.deselectRow(at: indexPath, animated: false)
     }
 
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let lastElement = self.isFiltering ? self.filteredpokemonsBasicInfo.count : self.pokemonsBasicInfo.count
-        if indexPath.row == lastElement - 10 {
-            DispatchQueue.main.async {
-                if self.isFiltering && self.filteredpokemonsBasicInfo.count >= 30 {
-                    print("got filtering")
-                    let searchBar = self.searchController.searchBar
-                    if searchBar.text!.isInt {
-                        self.filteredpokemonsBasicInfo.append(contentsOf: self.pokeAPI.loadPokemons(idFilter: searchBar.text!,
-                      lastId: self.filteredpokemonsBasicInfo[self.filteredpokemonsBasicInfo.count - 1]?.nationalNumber ?? -1))
-                    } else {
-                        self.filteredpokemonsBasicInfo.append(contentsOf: self.pokeAPI.loadPokemons(nameFilter: searchBar.text!,
-                        lastId: self.filteredpokemonsBasicInfo[self.filteredpokemonsBasicInfo.count - 1]?.nationalNumber ?? -1))
-                    }
-                } else {
-                    self.pokemonsBasicInfo.append(contentsOf: self.pokeAPI.loadPokemons(totalLoaded: lastElement))
-                }
-                self.tableView.reloadData()
-            }
-        }
-    }
+//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+//        let lastElement = self.isFiltering ? self.filteredpokemonsBasicInfo.count : self.pokemonsBasicInfo.count
+//        if indexPath.row == lastElement - 10 {
+//            DispatchQueue.main.async {
+//                if self.isFiltering && self.filteredpokemonsBasicInfo.count >= 30 {
+//                    print("got filtering")
+//                    let searchBar = self.searchController.searchBar
+//                    if searchBar.text!.isInt {
+//                        self.filteredpokemonsBasicInfo.append(contentsOf: self.pokeAPI.loadPokemons(idFilter: searchBar.text!,
+//                      lastId: self.filteredpokemonsBasicInfo[self.filteredpokemonsBasicInfo.count - 1]?.nationalNumber ?? -1))
+//                    } else {
+//                        self.filteredpokemonsBasicInfo.append(contentsOf: self.pokeAPI.loadPokemons(nameFilter: searchBar.text!,
+//                        lastId: self.filteredpokemonsBasicInfo[self.filteredpokemonsBasicInfo.count - 1]?.nationalNumber ?? -1))
+//                    }
+//                } else {
+//                    self.pokemonsBasicInfo.append(contentsOf: self.pokeAPI.loadPokemons(totalLoaded: lastElement))
+//                }
+//                self.tableView.reloadData()
+//            }
+//        }
+//    }
 
 }
 
-extension HomeViewController: UISearchResultsUpdating {
+extension HomeViewController: UISearchResultsUpdating, UISearchBarDelegate {
   func updateSearchResults(for searchController: UISearchController) {
       let searchBar = searchController.searchBar
       self.filterContentForSearchText(searchBar.text!)
       if isFiltering && filteredpokemonsBasicInfo.count < 30 {
-          if searchBar.text!.isInt {
-              self.filteredpokemonsBasicInfo.append(contentsOf: self.pokeAPI.loadPokemons(idFilter: searchBar.text!,
-                                                                                          totalLoaded: self.filteredpokemonsBasicInfo.count,
-                                                                                          lastId: self.filteredpokemonsBasicInfo[self.filteredpokemonsBasicInfo.count - 1]?.nationalNumber ?? 0))
-          } else {
-              self.filteredpokemonsBasicInfo.append(contentsOf: self.pokeAPI.loadPokemons(nameFilter: searchBar.text!,
-                                                                                          totalLoaded: self.filteredpokemonsBasicInfo.count,
-                                                                                          lastId: self.filteredpokemonsBasicInfo[self.filteredpokemonsBasicInfo.count - 1]?.nationalNumber ?? 0))
-          }
+          print("here")
+//          if searchBar.text!.isInt {
+//              self.filteredpokemonsBasicInfo.append(contentsOf: self.pokeAPI.loadPokemons(idFilter: searchBar.text!,
+//                                                                                          totalLoaded: self.filteredpokemonsBasicInfo.count,
+//                                                                                          lastId: self.filteredpokemonsBasicInfo[self.filteredpokemonsBasicInfo.count - 1]?.nationalNumber ?? 0))
+//          } else {
+//              print(self.filteredpokemonsBasicInfo)
+//              var lastId = self.filteredpokemonsBasicInfo.count - 1 > 0 ? self.filteredpokemonsBasicInfo.count - 1 : 0
+//              var lastPokeNumber = self.filteredpokemonsBasicInfo.isEmpty ? 1 : self.filteredpokemonsBasicInfo[lastId]?.nationalNumber ?? 0
+//              self.filteredpokemonsBasicInfo.append(contentsOf: self.pokeAPI.loadPokemons(nameFilter: searchBar.text!,
+//                                                                                          totalLoaded: self.filteredpokemonsBasicInfo.count,
+//                                                                                          lastId: lastPokeNumber))
+//          }
       }
       tableView.reloadData()
   }
+
+
 }

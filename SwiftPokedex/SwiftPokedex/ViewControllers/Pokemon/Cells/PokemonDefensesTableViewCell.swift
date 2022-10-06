@@ -26,7 +26,7 @@ class PokemonDefensesTableViewCell: UITableViewCell {
         return label
     }()
 
-    internal let mainStackView: UIStackView = {
+    internal var mainStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
@@ -43,6 +43,14 @@ class PokemonDefensesTableViewCell: UITableViewCell {
             self.mainStackView.bottomAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.bottomAnchor),
             self.mainStackView.trailingAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.trailingAnchor)
         ])
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        self.label.isHidden = true
+        for view in self.mainStackView.subviews {
+            view.removeFromSuperview()
+        }
     }
 
     internal func addImages(_ types: [String]) {

@@ -234,5 +234,4 @@ extension HomeViewController: UISearchResultsUpdating, UISearchBarDelegate {
       tableView.reloadData()
   }
 
-
 }

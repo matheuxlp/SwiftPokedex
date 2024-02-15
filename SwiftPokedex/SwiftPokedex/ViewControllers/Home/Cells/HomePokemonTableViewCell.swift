@@ -152,8 +152,4 @@ class HomePokemonTableViewCell: UITableViewCell {
         }
     }
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-    }
-
 }

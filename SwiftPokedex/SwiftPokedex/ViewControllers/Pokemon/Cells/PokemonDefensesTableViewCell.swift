@@ -118,17 +118,6 @@ class PokemonDefensesTableViewCell: UITableViewCell {
         }
     }
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-
     fileprivate func damageConverter(_ damageString: String) -> String {
         if damageString == "normal_damage_from" {
             return " "

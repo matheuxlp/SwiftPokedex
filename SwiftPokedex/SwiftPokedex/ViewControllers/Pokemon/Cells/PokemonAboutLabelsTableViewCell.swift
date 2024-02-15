@@ -269,14 +269,6 @@ class PokemonAboutLabelsTableViewCell: UITableViewCell {
         self.firstInfoLabel.numberOfLines = 0
     }
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-    }
-
     fileprivate func createAbilitiesString(_ abilities: [Ability]?) -> (String, String) {
         var abilitiesString: String = ""
         var hiddenAbilitiesString: String = ""

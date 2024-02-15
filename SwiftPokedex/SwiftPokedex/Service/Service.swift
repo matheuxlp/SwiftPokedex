@@ -456,4 +456,3 @@ extension PokeAPI {
         case fairy
     }
 }
-

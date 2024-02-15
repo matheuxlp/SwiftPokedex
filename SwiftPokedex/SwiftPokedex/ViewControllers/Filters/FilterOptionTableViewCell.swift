@@ -51,10 +51,6 @@ class FilterOptionTableViewCell: UITableViewCell {
         self.setupConstraints()
     }
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-    }
-
     fileprivate func addSubviews() {
         self.contentView.addSubview(self.collectionView)
     }
@@ -112,11 +108,6 @@ class FilterTypeCollectionViewCell: UICollectionViewCell {
         button.addTarget(self, action: #selector(self.selectedType(_:)), for: .touchUpInside)
         return button
     }()
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-
-    }
 
     func setupData() {
         self.contentView.addSubview(self.button)
